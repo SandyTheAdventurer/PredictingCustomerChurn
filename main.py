@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, ConfusionMatrixDisplay
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 
@@ -39,3 +39,30 @@ for column in dataset.columns:
     fig, ax = plt.subplots(figsize=(16, 10))
     sns.kdeplot(dataset[column],ax=ax)
     plt.savefig(f"graphs/{column}.png")
+
+# Splitting the dataset into training and testing sets
+y = dataset.pop("Churn").values
+X = dataset
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Logistic Regression Model
+model = LogisticRegression()
+
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+# Evaluating the model
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+cm = confusion_matrix(y_test, y_pred)
+
+display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+display.plot(cmap=plt.cm.Blues)
+plt.savefig("graphs/ConfusionMatrix.png")
+
+print("Accuracy Score:")
+print(accuracy_score(y_test, y_pred))
+print("ROC AUC Score:")
+print(roc_auc_score(y_test, y_pred))
