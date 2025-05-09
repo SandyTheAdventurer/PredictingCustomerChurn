@@ -2,9 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, ConfusionMatrixDisplay
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, ConfusionMatrixDisplay, brier_score_loss
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
+import shap
+
+shap.initjs()
 
 dataset = pd.read_csv("data.csv")
 
@@ -62,7 +65,15 @@ display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.class
 display.plot(cmap=plt.cm.Blues)
 plt.savefig("graphs/ConfusionMatrix.png")
 
+print("Brier Score Loss:")
+print(brier_score_loss(y_test, y_pred))
 print("Accuracy Score:")
 print(accuracy_score(y_test, y_pred))
 print("ROC AUC Score:")
 print(roc_auc_score(y_test, y_pred))
+
+# SHAP Analysis
+explainer = shap.LinearExplainer(model, X_train)
+shap_values = explainer(X_test)
+shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
+plt.savefig("graphs/SHAP_Summary.png")
