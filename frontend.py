@@ -2,7 +2,7 @@ import gradio as gr
 import main
 import numpy as np
 import pandas as pd
-from main import clf_rf, clf_log, accuracy_score_rf, accuracy_score_lr, breier_score_rf, breier_score_lr, roc_rf, roc_lr
+from main import clf_rf, clf_log, accuracy_score_rf, accuracy_score_lr, brier_score_rf, brier_score_lr, roc_rf, roc_lr
 
 def eda(Graphs):
     match Graphs:
@@ -125,8 +125,8 @@ def metrics(Algorithms):
                 value = df
             )
             df_acc = gr.DataFrame(
-                headers = ['Accuracy Score', 'Breier Score', 'ROC Score'],
-                value = [list([accuracy_score_rf, breier_score_rf, roc_rf])],
+                headers = ['Accuracy Score', 'Brier Score', 'ROC Score'],
+                value = [list([accuracy_score_rf, brier_score_rf, roc_rf])],
             )
             return df_clf, df_acc
         
@@ -138,8 +138,8 @@ def metrics(Algorithms):
                 value = df
             )
             df_acc = gr.DataFrame(
-                headers = ['Accuracy Score', 'Breier Score', 'ROC Score'],
-                value = [list([accuracy_score_lr, breier_score_lr, roc_lr])],
+                headers = ['Accuracy Score', 'Brier Score', 'ROC Score'],
+                value = [list([accuracy_score_lr, brier_score_lr, roc_lr])],
             )
             return df_clf, df_acc
 
