@@ -71,12 +71,12 @@ display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=rf_clf.clas
 display.plot(cmap=plt.cm.Blues)
 plt.savefig("graphs/OutputGraphs/ConfusionMatrixRandomForest.png")
 
-breier_score_rf = brier_score_loss(y_test, y_rf_pred)
+brier_score_rf = brier_score_loss(y_test, y_rf_pred)
 accuracy_score_rf = accuracy_score(y_test, y_rf_pred)
 roc_rf = roc_auc_score(y_test, y_rf_pred)
 
 print("Brier Score Loss:")
-print(breier_score_rf)
+print(brier_score_rf)
 print("Accuracy Score:")
 print(accuracy_score_rf)
 print("ROC AUC Score:")
@@ -108,12 +108,12 @@ display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=logistic.cl
 display.plot(cmap=plt.cm.Blues)
 plt.savefig("graphs/OutputGraphs/ConfusionMatrixLogistic.png")
 
-breier_score_lr = brier_score_loss(y_test, y_log_pred)
+brier_score_lr = brier_score_loss(y_test, y_log_pred)
 accuracy_score_lr = accuracy_score(y_test, y_log_pred)
 roc_lr = roc_auc_score(y_test, y_log_pred)
 
 print("Brier Score Loss:")
-print(breier_score_lr)
+print(brier_score_lr)
 print("Accuracy Score:")
 print(accuracy_score_lr)
 print("ROC AUC Score:")
