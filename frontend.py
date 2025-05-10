@@ -38,19 +38,81 @@ def eda(Graphs):
 def result(Graphs):
     match Graphs:
         case "Correlation":
-            inf = "Enter inference here"
+            inf = """
+Inferences:
+
+    - Churn is perfectly correlated with itself (1.0).
+
+    - Tenure and Contract have strong negative correlation with Churn.
+
+    - MonthlyCharges and PaperlessBilling have moderate positive correlation with Churn.
+
+    - Gender, PhoneService, and MultipleLines have near-zero correlation.
+
+    - OnlineSecurity, TechSupport, and DeviceProtection have moderate negative correlation.
+"""
             return [gr.Image("graphs/EDAGraphs/Correlation.png"), inf]
         case "Confusion Matrix for Random Forest":
-            inf = "Enter inference here"
+            inf = """
+Inferences:
+
+    - True Positives (181) are lower than Logistic Regression’s (215), indicating worse recall for churn.
+
+    - False Negatives (192) are higher – more churners are missed.
+
+    - False Positives (104) are slightly higher than logistic regression’s — marginally more false alarms.
+
+    - True Negatives (932) are comparable – performs similarly for non-churn cases.
+
+    - Overall: Slightly poorer at identifying churn compared to Logistic Regression in this case.
+
+"""
             return [gr.Image("graphs/OutputGraphs/ConfusionMatrixRandomForest.png"), inf]
         case "Confusion Matrix for Logistic regression":
-            inf = "Enter inference here"
+            inf = """
+Inferences:
+
+    - True Negatives (936) and True Positives (215) indicate good performance in correctly identifying both classes.
+
+    - False Negatives (158): A moderate number of actual churns are missed, which could be critical in business decisions.
+
+    - False Positives (100): Some non-churning customers are predicted to churn — might lead to unnecessary retention efforts.
+
+    - Model Bias: Slight bias towards predicting the majority class (non-churn).
+
+    - Overall: Reasonable balance, but recall for churn could be improved.
+
+"""
             return [gr.Image("graphs/OutputGraphs/ConfusionMatrixLogistic.png"), inf]
         case "SHAP analysis for Random Forest":
-            inf = "Enter inference here"
+            inf = """
+Inferences:
+
+    - Bimodal Distribution: Indicates two clear groups — likely senior citizens and non-seniors with distinct behavior patterns.
+
+    - Near-Zero SHAP values: SeniorCitizen has limited standalone predictive power.
+
+    - Interaction: The variable may influence predictions when combined with other features (e.g., internet service or contract).
+
+    - Red vs Blue Dots: Represents SHAP values across classes — they’re symmetric, confirming weak influence.
+
+    - Overall: SeniorCitizen is not a key predictor by itself in this model.
+"""
             return [gr.Image("graphs/OutputGraphs/SHAP_RandomForest_Summary.png"), inf]
         case "SHAP analysis for Logistic Regression":
-            inf = "Enter inference here"
+            inf = """
+Inferences:
+
+    - Top Feature: tenure is the most influential in predicting churn — lower tenure likely increases churn risk.
+
+    - MonthlyCharges & Contract also have strong effects — customers on monthly or expensive plans may churn more.
+
+    - Security-related services (e.g., OnlineSecurity, TechSupport) have moderate influence — presence may reduce churn.
+    
+    - PaperlessBilling and OnlineBackup show notable contributions, possibly associated with digital-savvy customers.
+
+    - Features like DeviceProtection, Partner, and PaymentMethod have minimal impact.
+"""
             return [gr.Image("graphs/OutputGraphs/SHAP_Logistic_Summary.png"), inf]
 
 def metrics(Algorithms):
@@ -92,7 +154,7 @@ with gr.Blocks() as Output:
     with gr.Tab("Output Graphs"):
         result_input = gr.Radio(["Correlation", "Confusion Matrix for Random Forest", "Confusion Matrix for Logistic regression", "SHAP analysis for Random Forest", "SHAP analysis for Logistic Regression"], show_label = False)
 
-        result_output = [gr.Image(), gr.Label()]
+        result_output = [gr.Image(), gr.Markdown()]
 
         result_input.change(fn = result, inputs=result_input, outputs = result_output)
 
