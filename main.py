@@ -62,6 +62,7 @@ y_rf_pred = rf_clf.predict(X_test)
 # Evaluating Random Forest 
 print("\n\t\t\tRandom Forest Classifier:\n")
 print("Classification Report for Random Forest:")
+clf_rf = classification_report(y_test, y_rf_pred, output_dict= True)
 print(classification_report(y_test, y_rf_pred))
 
 cm = confusion_matrix(y_test, y_rf_pred)
@@ -70,12 +71,16 @@ display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=rf_clf.clas
 display.plot(cmap=plt.cm.Blues)
 plt.savefig("graphs/OutputGraphs/ConfusionMatrixRandomForest.png")
 
+breier_score_rf = brier_score_loss(y_test, y_rf_pred)
+accuracy_score_rf = accuracy_score(y_test, y_rf_pred)
+roc_rf = roc_auc_score(y_test, y_rf_pred)
+
 print("Brier Score Loss:")
-print(brier_score_loss(y_test, y_rf_pred))
+print(breier_score_rf)
 print("Accuracy Score:")
-print(accuracy_score(y_test, y_rf_pred))
+print(accuracy_score_rf)
 print("ROC AUC Score:")
-print(roc_auc_score(y_test, y_rf_pred))
+print(roc_rf)
 
 
 explainer = shap.TreeExplainer(rf_clf)
@@ -94,6 +99,7 @@ y_log_pred = logistic.predict(X_test)
 # Evaluating logistic
 print("\t\t\tLogistic Regression:\n")
 print("Classification Report for Logistic Regression:")
+clf_log = classification_report(y_test, y_log_pred, output_dict= True)
 print(classification_report(y_test, y_log_pred))
 
 cm = confusion_matrix(y_test, y_log_pred)
@@ -102,12 +108,16 @@ display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=logistic.cl
 display.plot(cmap=plt.cm.Blues)
 plt.savefig("graphs/OutputGraphs/ConfusionMatrixLogistic.png")
 
+breier_score_lr = brier_score_loss(y_test, y_log_pred)
+accuracy_score_lr = accuracy_score(y_test, y_log_pred)
+roc_lr = roc_auc_score(y_test, y_log_pred)
+
 print("Brier Score Loss:")
-print(brier_score_loss(y_test, y_log_pred))
+print(breier_score_lr)
 print("Accuracy Score:")
-print(accuracy_score(y_test, y_log_pred))
+print(accuracy_score_lr)
 print("ROC AUC Score:")
-print(roc_auc_score(y_test, y_log_pred))
+print(roc_lr)
 
 # SHAP Analysis for logistic regression
 explainer = shap.LinearExplainer(logistic, X_train)
