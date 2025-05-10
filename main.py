@@ -33,19 +33,19 @@ corr=dataset.corr()["Churn"]
 ax.set_xticklabels(corr.index, rotation=45, ha='right', fontsize=10)
 
 sns.barplot(x=corr.index, y=corr.values, ax=ax)
-plt.savefig("graphs/Correlation.png")
+plt.savefig("graphs/EDAGraphs/Correlation.png")
 
 # Based on the correlation plot, the following features are removed
 dataset.drop(columns=['gender', 'PhoneService', 'MultipleLines', 'InternetService', 'StreamingTV', 'StreamingMovies', 'TotalCharges'], inplace=True)
 # Multivariate analysis
 fig, ax = plt.subplots(figsize=(16, 10))
 sns.heatmap(dataset.corr(), annot=True, fmt=".2f", cmap='coolwarm', ax=ax)
-plt.savefig("graphs/Heatmap.png")
+plt.savefig("graphs/EDAGraphs/Heatmap.png")
 
 for column in dataset.columns:
     fig, ax = plt.subplots(figsize=(16, 10))
     sns.kdeplot(dataset[column],ax=ax)
-    plt.savefig(f"graphs/{column}.png")
+    plt.savefig(f"graphs/EDAGraphs/{column}.png")
 
 # Splitting the dataset into training and testing sets
 y = dataset.pop("Churn").values
@@ -68,7 +68,7 @@ cm = confusion_matrix(y_test, y_rf_pred)
 
 display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=rf_clf.classes_)
 display.plot(cmap=plt.cm.Blues)
-plt.savefig("graphs/ConfusionMatrix.png")
+plt.savefig("graphs/OutputGraphs/ConfusionMatrixRandomForest.png")
 
 print("Brier Score Loss:")
 print(brier_score_loss(y_test, y_rf_pred))
@@ -81,7 +81,7 @@ print(roc_auc_score(y_test, y_rf_pred))
 explainer = shap.TreeExplainer(rf_clf)
 shap_values = explainer.shap_values(X_test)
 shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
-plt.savefig("graphs/SHAP_RandomForest_Summary.png")
+plt.savefig("graphs/OutputGraphs/SHAP_RandomForest_Summary.png")
 
 
 # Logistic Regression Model
@@ -100,7 +100,7 @@ cm = confusion_matrix(y_test, y_log_pred)
 
 display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=logistic.classes_)
 display.plot(cmap=plt.cm.Blues)
-plt.savefig("graphs/ConfusionMatrix.png")
+plt.savefig("graphs/OutputGraphs/ConfusionMatrixLogistic.png")
 
 print("Brier Score Loss:")
 print(brier_score_loss(y_test, y_log_pred))
@@ -113,4 +113,4 @@ print(roc_auc_score(y_test, y_log_pred))
 explainer = shap.LinearExplainer(logistic, X_train)
 shap_values = explainer(X_test)
 shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
-plt.savefig("graphs/SHAP_Logistic_Summary.png")
+plt.savefig("graphs/OutputGraphs/SHAP_Logistic_Summary.png")
