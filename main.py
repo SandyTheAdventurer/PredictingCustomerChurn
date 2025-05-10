@@ -2,10 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, ConfusionMatrixDisplay, brier_score_loss
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 import shap
+import warnings
+
+warnings.filterwarnings("ignore")
 
 shap.initjs()
 
@@ -48,32 +52,65 @@ y = dataset.pop("Churn").values
 X = dataset
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-# Logistic Regression Model
-model = LogisticRegression()
 
-model.fit(X_train, y_train)
+# Random Forest model
 
-y_pred = model.predict(X_test)
+rf_clf = RandomForestClassifier(n_estimators = 100) 
+rf_clf.fit(X_train, y_train)
+y_rf_pred = rf_clf.predict(X_test)
 
-# Evaluating the model
-print("Classification Report:")
-print(classification_report(y_test, y_pred))
+# Evaluating Random Forest 
+print("\n\t\t\tRandom Forest Classifier:\n")
+print("Classification Report for Random Forest:")
+print(classification_report(y_test, y_rf_pred))
 
-cm = confusion_matrix(y_test, y_pred)
+cm = confusion_matrix(y_test, y_rf_pred)
 
-display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=rf_clf.classes_)
 display.plot(cmap=plt.cm.Blues)
 plt.savefig("graphs/ConfusionMatrix.png")
 
 print("Brier Score Loss:")
-print(brier_score_loss(y_test, y_pred))
+print(brier_score_loss(y_test, y_rf_pred))
 print("Accuracy Score:")
-print(accuracy_score(y_test, y_pred))
+print(accuracy_score(y_test, y_rf_pred))
 print("ROC AUC Score:")
-print(roc_auc_score(y_test, y_pred))
+print(roc_auc_score(y_test, y_rf_pred))
 
-# SHAP Analysis
-explainer = shap.LinearExplainer(model, X_train)
+
+explainer = shap.TreeExplainer(rf_clf)
+shap_values = explainer.shap_values(X_test)
+shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
+plt.savefig("graphs/SHAP_RandomForest_Summary.png")
+
+
+# Logistic Regression Model
+logistic = LogisticRegression()
+
+logistic.fit(X_train, y_train)
+
+y_log_pred = logistic.predict(X_test)
+
+# Evaluating logistic
+print("\t\t\tLogistic Regression:\n")
+print("Classification Report for Logistic Regression:")
+print(classification_report(y_test, y_log_pred))
+
+cm = confusion_matrix(y_test, y_log_pred)
+
+display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=logistic.classes_)
+display.plot(cmap=plt.cm.Blues)
+plt.savefig("graphs/ConfusionMatrix.png")
+
+print("Brier Score Loss:")
+print(brier_score_loss(y_test, y_log_pred))
+print("Accuracy Score:")
+print(accuracy_score(y_test, y_log_pred))
+print("ROC AUC Score:")
+print(roc_auc_score(y_test, y_log_pred))
+
+# SHAP Analysis for logistic regression
+explainer = shap.LinearExplainer(logistic, X_train)
 shap_values = explainer(X_test)
 shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
-plt.savefig("graphs/SHAP_Summary.png")
+plt.savefig("graphs/SHAP_Logistic_Summary.png")
