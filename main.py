@@ -10,8 +10,6 @@ from sklearn.model_selection import train_test_split
 import shap
 import warnings
 
-os.system("mkdir graphs/EDAGraphs")
-os.system("mkdir graphs/OutputGraphs")
 warnings.filterwarnings("ignore")
 
 shap.initjs()
