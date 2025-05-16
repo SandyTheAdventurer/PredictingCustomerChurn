@@ -53,6 +53,10 @@ for column in dataset.columns:
         sns.violinplot(x="Churn", y=column, data=dataset)
         plt.savefig(f"graphs/EDAGraphs/{column}.png")
         continue
+    if column == "tenure":
+        sns.violinplot(x="Churn", y=column, data=dataset)
+        plt.savefig(f"graphs/EDAGraphs/{column}.png")
+        continue
     sns.barplot(x=column, y="Churn", data=dataset ,ax=ax)
     plt.savefig(f"graphs/EDAGraphs/{column}.png")
 
