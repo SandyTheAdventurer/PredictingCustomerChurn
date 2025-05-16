@@ -1,3 +1,11 @@
+---
+title: PredictingCustomerChurn
+sdk: gradio
+emoji: 🚀
+colorFrom: red
+colorTo: yellow
+short_description: A model for predicting telecom churn
+---
 # Predicting Telco Customer Churn using IBM dataset
 
 This project applies machine learning techniques to predict customer churn using a dataset containing customer behavior and subscription details. The aim is to identify customers likely to leave a service and gain insights through model interpretability using SHAP values.
