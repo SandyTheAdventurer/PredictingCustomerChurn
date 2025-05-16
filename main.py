@@ -23,7 +23,7 @@ dataset.drop(columns=['customerID'], inplace=True)
 # Encoding categorical variables and Scaling numerical variables
 encoder = LabelEncoder()
 scaler = StandardScaler()
-for column in dataset.select_dtypes(include=['int64', 'float64']).columns:
+for column in dataset.select_dtypes(include=['int64', 'float64']).columns.drop("SeniorCitizen"):
     dataset[column] = scaler.fit_transform(dataset[column].values.reshape(-1, 1))
 for column in dataset.select_dtypes(include=['object']).columns:
     dataset[column] = encoder.fit_transform(dataset[column])
@@ -45,7 +45,15 @@ plt.savefig("graphs/EDAGraphs/Heatmap.png")
 
 for column in dataset.columns:
     fig, ax = plt.subplots(figsize=(16, 10))
-    sns.kdeplot(dataset[column],ax=ax)
+    if column == "Churn":
+        sns.kdeplot(x="Churn", data=dataset)
+        plt.savefig(f"graphs/EDAGraphs/{column}.png")
+        continue
+    if column == "MonthlyCharges":
+        sns.violinplot(x="Churn", y=column, data=dataset)
+        plt.savefig(f"graphs/EDAGraphs/{column}.png")
+        continue
+    sns.barplot(x=column, y="Churn", data=dataset ,ax=ax)
     plt.savefig(f"graphs/EDAGraphs/{column}.png")
 
 # Splitting the dataset into training and testing sets
