@@ -2,7 +2,7 @@ import gradio as gr
 import main
 import numpy as np
 import pandas as pd
-from main import clf_rf, clf_log, accuracy_score_rf, accuracy_score_lr, brier_score_rf, brier_score_lr, roc_rf, roc_lr
+from main import clf_rf, clf_log, accuracy_score_rf, accuracy_score_lr, brier_score_rf, brier_score_lr, roc_rf, roc_lr, logistic, rf_clf, encoder, scaler
 
 def eda(Graphs):
     match Graphs:
@@ -143,6 +143,39 @@ def metrics(Algorithms):
             )
             return df_clf, df_acc
 
+def predictChurn(model, filename):
+    dataset = pd.read_csv(filename)
+
+    customers = dataset["customerID"]
+    dataset.drop(columns=['customerID'], inplace=True)
+
+    for column in dataset.select_dtypes(include=['int64', 'float64']).columns:
+        dataset[column] = scaler.fit_transform(dataset[column].values.reshape(-1, 1))
+    for column in dataset.select_dtypes(include=['object']).columns:
+        dataset[column] = encoder.fit_transform(dataset[column])
+
+    dataset.drop(columns=['gender', 'PhoneService', 'MultipleLines', 'InternetService', 'StreamingTV', 'StreamingMovies', 'TotalCharges'], inplace=True)
+
+    match model:
+        case "Logistic Regression":
+            model = logistic
+        case "Random Forest":
+            model = rf_clf
+
+    y_predictions = model.predict(dataset)
+    print(y_predictions)
+    d = {0: "No Churn", 1: "Churn"}
+
+    l = zip(customers, y_predictions)
+
+    df = pd.DataFrame(l, columns= ["Customer ID", "Output"])
+
+    for i in range(len(df["Customer ID"])):
+        output = d[y_predictions[i]]
+        df["Output"][i] = output
+
+    return gr.DataFrame(value = df)
+
 with gr.Blocks() as Output:
     gr.Markdown("View Exploratory data Analysis and Output")
     with gr.Tab("EDA Graphs"):
@@ -165,5 +198,20 @@ with gr.Blocks() as Output:
 
         algorithm.change(fn = metrics, inputs = algorithm, outputs = metrics_output)
 
+    with gr.Tab("Predict Live"):
+        gr.Markdown("# Predict Churn")
+        model = gr.Radio(["Logistic Regression", "Random Forest"], show_label = False)
+        file = gr.File()
+        dataset = gr.UploadButton("Upload Dataset(as CSV file)", file_count = "single")
+        predict = gr.Button("Predict")
+
+        op_df = gr.DataFrame(headers = ["Customer ID", "Output"])
+        op_md = gr.Markdown("# Predicted Churns")
+
+        clear = gr.ClearButton(components = [model, file, dataset, op_df])
+
+        dataset.upload(lambda file: file, dataset, file)
+        predict.click(fn = predictChurn, inputs = [model, dataset], outputs = op_df)
+        clear.click()
 
 Output.launch()
